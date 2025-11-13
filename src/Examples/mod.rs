@@ -43,7 +43,7 @@ pub mod boxes{
         Dereffirst(Dereffirst),
         Derefsecond(Derefsecond)
     }
-    impl Deref for Box<Dereferable>{
+    impl Deref for Dereferable{
         type Target = String;
         fn deref(&self) -> &Self::Target {
             return match self {
@@ -51,6 +51,14 @@ pub mod boxes{
                 Dereferable::Derefsecond(d) => { &d.surname }
             }
         }
+    }
+    fn derefering(){
+        let boxedfirst: Box<Dereferable> = Box::new(Dereferable::Dereffirst(Dereffirst {
+            name: "Lorenzo".to_string(),
+            surname: "Rossi".to_string(),
+        }));
+
+        println!("{}\n", **boxedfirst);
     }
 
 }
