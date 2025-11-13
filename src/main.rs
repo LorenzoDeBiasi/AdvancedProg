@@ -1,3 +1,4 @@
+mod Examples;
 fn main() {
-    println!("Hello, world!");
+    Examples::dyn_ex::example();
 }
