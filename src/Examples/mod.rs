@@ -57,10 +57,7 @@ pub mod boxes{
             name: "Lorenzo".to_string(),
             surname: "Rossi".to_string(),
         }));
-        let boxedsecond: Box<Dereferable> = Box::new(Dereferable::Derefsecond(Derefsecond {
-            name: "Negro".to_string(),
-            surname: "Amaro".to_string(),
-        }));
+        
         println!("{}\n", **boxedfirst);
     }
 
