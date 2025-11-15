@@ -1,6 +1,10 @@
-mod Examples;
+use std::rc::Rc;
+
+mod examples;
+
 fn main() {
-    Examples::dyn_ex::example();
-
-
+    //examples::dyn_ex::example();
+    //examples::boxes::example();
+    //examples::arc::example()
+    examples::refcell::example();
 }
