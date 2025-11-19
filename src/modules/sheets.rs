@@ -384,3 +384,16 @@ pub mod sheet5{
     }
 }
 
+pub mod sheet6{
+    pub mod ex1{
+        use std::cell::RefCell;
+        use std::rc::Rc;
+
+        //node for a generic binary tree
+        struct TreeNode<T>{
+            value: T,
+            left: Rc<RefCell<TreeNode<T>>>
+            right:
+        }
+    }
+}
