@@ -1,10 +1,11 @@
-use std::rc::Rc;
-
-mod examples;
+mod modules;
 
 fn main() {
-    //examples::dyn_ex::example();
-    //examples::boxes::example();
-    //examples::arc::example()
-    examples::refcell::example();
+    //modules::random::dyn_ex::example();
+    //modules::random::boxes::example();
+    //modules::random::arc::example();
+    //modules::random::refcell::example();
+    //modules::sheets::sheet5::ex2::example();
+    //modules::sheets::sheet5::ex3::example();
+    modules::sheets::sheet5::ex7::example();
 }
