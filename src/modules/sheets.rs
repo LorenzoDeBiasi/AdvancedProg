@@ -387,13 +387,91 @@ pub mod sheet5{
 pub mod sheet6{
     pub mod ex1{
         use std::cell::RefCell;
+        use std::collections::VecDeque;
         use std::rc::Rc;
 
         //node for a generic binary tree
         struct TreeNode<T>{
             value: T,
-            left: Rc<RefCell<TreeNode<T>>>
-            right:
+            left: Option<Rc<RefCell<TreeNode<T>>>>,
+            right: Option<Rc<RefCell<TreeNode<T>>>>
         }
+
+        impl<T: Clone> TreeNode<T>{
+            fn new(v: T) -> TreeNode<T> { TreeNode{ value: v, left: None, right: None } }
+            fn from_vec(vec: &Vec<T>) -> Option<Rc<RefCell<TreeNode<T>>>> {
+                Self::build_tree(vec, 0)
+            }
+            fn build_tree(vec: &Vec<T>, idx: usize) -> Option<Rc<RefCell<TreeNode<T>>>>{
+                if idx >= vec.len() { return None; }
+                Some(Rc::new(RefCell::new(TreeNode{
+                    value: vec[idx].clone(),
+                    left: Self::build_tree(vec, idx * 2 + 1),
+                    right: Self::build_tree(vec, idx * 2 + 2),
+                })))
+            }
+            fn insert(root: &mut Option<Rc<RefCell<TreeNode<T>>>>, val: T){
+                //non posso usare &mut self perché quando la root è solo None non esite self per None e non posso chiamarci metodi
+                if root.is_none() {
+                    *root = Some(Rc::new(RefCell::new(Self::new(val))));
+                    return;
+                }
+                //uso i nodi solo in lettura quindi eeeeasy
+                let mut queue:VecDeque<Rc<RefCell<TreeNode<T>>>> = VecDeque::new();
+                queue.push_back(root.clone().unwrap());
+
+                let mut done = false;
+                while !queue.is_empty() && !done{
+                    //ricorda che si scrivevi tutto in una riga l'rc moriva subito (Temporary value is freed at the end of this statement)
+                    let rc = queue.pop_front().unwrap();
+                    let mut node = rc.borrow_mut();
+
+                    //qui servono delle & se no stai muovendo fuori un valore da un borrow (non se po')
+                    match (&node.left, &node.right){
+                        (Some(l), Some(r)) => {
+                            queue.push_back(l.clone());
+                            queue.push_back(r.clone());
+                        }
+                        (None, _) => {
+                            node.left = Some(Rc::new(RefCell::new(Self::new(val.clone()))));
+                            done = true;
+                        }
+                        (Some(_), None) => {
+                            node.right = Some(Rc::new(RefCell::new(Self::new(val.clone()))));
+                            done = true;
+                        }
+                    }
+                }
+            }
+        }
+        impl<T: std::fmt::Debug + Clone> TreeNode<T> {
+            fn print_tree(root: &Option<Rc<RefCell<TreeNode<T>>>>, prefix: String, is_left: bool) {
+                if let Some(rc) = root {
+                    let node = rc.borrow();
+                    println!("{}{}{:?}", prefix, if is_left { "├── " } else { "└── " }, node.value);
+
+                    let new_prefix = format!("{}{}", prefix, if is_left { "│   " } else { "    " });
+                    Self::print_tree(&node.left, new_prefix.clone(), true);
+                    Self::print_tree(&node.right, new_prefix, false);
+                }
+            }
+        }
+
+
+
+        pub fn example() {
+            let mut root: Option<Rc<RefCell<TreeNode<i32>>>> = TreeNode::from_vec(&vec![1, 2, 3, 4, 5]);
+
+            println!("Albero iniziale:");
+            TreeNode::print_tree(&root, "".to_string(), false);
+
+            TreeNode::insert(&mut root, 6);
+            TreeNode::insert(&mut root, 7);
+
+            println!("\nAlbero dopo insert:");
+            TreeNode::print_tree(&root, "".to_string(), false);
+        }
+
+
     }
 }
